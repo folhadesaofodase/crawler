@@ -4,7 +4,8 @@ const getValues = async () => {
 	const TRANSP_PORTAL_URL = 'http://www.transparencia.pr.gov.br/pte/home'
 	const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
-	const browser = await puppeteer.launch({ headless: false })
+	console.log('Launching')
+	const browser = await puppeteer.launch()
 	const page = await browser.newPage()
 
 	await page.goto(TRANSP_PORTAL_URL)
@@ -18,6 +19,7 @@ const getValues = async () => {
 	await page.waitForSelector('.ui-selectonemenu-item.ui-selectonemenu-list-item.ui-corner-all')
 	await page.waitForSelector('.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only.ui-button.ui-button-success.ui-button-download')
 
+	console.log('Filtering Month')
 	await page.evaluate(() => {
 		const month = new Date().getMonth()
 		document.getElementById('formPesquisaDespesa:filtroMesInicio_items').children[month].click()
@@ -29,6 +31,7 @@ const getValues = async () => {
 
 	await page.waitForSelector('.ui-datatable-data.ui-widget-content tr td')
 
+	console.log('Extracting Values')
 	const values = await page.evaluate(() => (
 		Array.from(
 			document.getElementsByClassName('ui-datatable-data ui-widget-content')[0].children)
